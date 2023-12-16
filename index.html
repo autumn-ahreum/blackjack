@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlackJack</title>
+    <link rel="stylesheet" href="./styles/normalize.css">
+    <link rel="stylesheet" href="./styles/styles.css">
+    <link rel="stylesheet" href="./styles/animate.min.css">
+    <script src="./scripts/script.js" defer ></script>
+
+</head>
+<body>
+    <div class="site-wrapper">
+        <main>
+            <section class="start">
+                <div class="start-box">
+                    <h1>BlackJack</h1>
+                    <img src="./images/blackjack-table-1.jpg" alt="BlackJack Start Image">
+                    <button class="btn-start">Start</button>
+                </div>
+            </section>
+            <section class="game" >
+                <div class="loading-box">
+                    <p>Now... let dealer suffle a dec...</p>
+                </div>
+                <div class="game-wrapper" id="game-wrapper">
+                    <div class="dealer-hand">
+                        <h2>Dealer</h2>
+                        <div class="dealer-cards-container"></div>
+                        <div><p>Dealer:<span class="dealer-sum"></span></p></div>
+                    </div>
+
+                    <div class="table">
+                        <button class="table-btn hit">Hit</button>
+                        <button class="table-btn stand">Stand</button>
+                    </div>
+
+                    <div class="player-hand">
+                        <h2>player</h2>
+                        <div class="player-cards-container"></div>
+                        <div><p>Player :<span class="palyer-sum"></span></p></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="result">
+                <div class="message-box">
+                    <div>you want to play agin?</div>
+                    <button class="btn-restart">Restart</button>
+                </div>
+            </section>
+
+            
+
+
+
+
+
+
+
+        </main>
+        <footer>
+            <p>&copy; 2023 Ahreum Han</p>
+        </footer>
+    </div>
+</body>
+</html>
