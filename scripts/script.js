@@ -45,13 +45,25 @@ class Card {
     createCardElement() {
         const card = document.createElement("div");
         card.classList.add("card");
-        card.classList.add(this.color)
+        card.classList.add(this.color);
+        card.style.zIndex = "1";
+
         card.innerHTML = 
-            `<div id="${this.name}">
-                <span class="card-name">${this.name}</span>
+            `<div id="${this.name}" class="card-face card-front active">
+                <div class="top-left">
+                    <div class="card-value"> ${this.name[0]}</div>
+                    <div class="card-suit">${this.name[1]}</div>
+                </div>
+                <div class="center-value">
+                    <span class="card-suit">${this.name[1]}</span>
+                </div>
             </div>
+            <div class="card-face card-back"></div>
             `;
-            return card;
+
+        card.children[1].style.marginLeft = "0";
+
+        return card;
     }
 }
 
@@ -89,9 +101,8 @@ let cardIndex = 0;
 let card; 
 
 function getOneCard() {
-
     card = new Card(
-        dec[cardIndex][0] + convertToType(dec[cardIndex]), 
+        dec[cardIndex][0] + convertToType(dec[cardIndex]), // TODO: look into issue with 0 
         parseInt(convertToValue(dec[cardIndex])),
         getColor(dec[cardIndex])
     );
@@ -105,7 +116,7 @@ function shuffle(cards) {
     for (let i = cards.length - 1; i > 0; i--) {
         let j = Math.floor(Math.random() * (i + 1));
         [cards[i], cards[j]] = [cards[j], cards[i]];
-}
+    }
 }
 
 
@@ -158,12 +169,14 @@ function introMassege() {
 };
 
 
-
 function resetUiState() {
+    cardIndex = 0;
     restartSection.style.display = "none";
     playerCardsContainer.innerHTML = ""
     dealerCardsContainer.innerHTML = ""
     hitBtn.removeEventListener("click", handleHitButton);
+    dealerCardsContainer.classList.remove("active"); //D's first card open
+
     // standBtn.removeEventListener();
     
 }
@@ -203,17 +216,17 @@ function gameStart(){
 
     // sum in UI 
     playerSumSection.textContent = newGame.playerSum;
-    dealerSumSection.textContent = newGame.dealerSum;
+    dealerSumSection.textContent = newGame.dealerSum - newGame.dealerCards[0].value;
 
     // check it there is Blackjack
     if (newGame.playerSum == 21) {
         resultMsg = "Wow, you are blackjack!!"
         endGame();
     } else if (newGame.dealerSum == 21) {
-        resultMsg = "oops, dealer is blackjack!!"
+        resultMsg = "Oops, dealer is blackjack!!" //open dealer card
         endGame();
     } else if (newGame.playerSum == 21 || newGame.dealerSum == 21) {
-        resultMsg = "Player and dealer are Blackjack"
+        resultMsg = "you and dealer are Blackjack"
         endGame();
     }
 
@@ -224,7 +237,7 @@ function gameStart(){
 
 //       2-4-2. if player hits 
 //                 2-4-2-1. player gets one card (card[4])
-    hitBtn.addEventListener('click', () => { handleHitButton(newGame) }, false);
+    hitBtn.addEventListener('click', handleHitButton);
 
     standBtn.addEventListener('click', function(){
         
@@ -234,7 +247,8 @@ function gameStart(){
 //                 2-4-1-1. while dealer sum less then 17, add 1 card(ex. card[4],card[5], card[6]]
 //                 2-4-1-2. if dealer sum is more than 21, dealer burst -> "player wins"
 //                 2-4-1-2. else, compare with player sum and evaluate who wins -> go to 2-6
-
+        dealerCardsContainer.classList.add("active"); //D's first card open
+        dealerSumSection.textContent = newGame.dealerSum;
         while (newGame.dealerSum < 17) {
             newGame.dealerCards.push(getOneCard());
             renderCard(newGame.dealerCards[newGame.dealerCards.length - 1], "dealer");
@@ -242,26 +256,31 @@ function gameStart(){
             dealerSumSection.textContent = newGame.dealerSum;
         }
 
-        if (newGame.dealerSum > 21) {
-            console.log("dealer is Burst!!")
-        } else {
-            return newGame.dealerSum;
-        }
+        evaluateSum("dealer", newGame.dealerSum);
 
-        evaluateWinner(newGame.playerSum, newGame.dealerSum);
+        // if (newGame.dealerSum > 21) {
+        //     console.log("dealer is Burst!!-inside function")
+        //     return newGame.dealerSum;
+        // } else {
+        //     return newGame.dealerSum;
+        // }
+        if (resultMsg="countiue") {
+            evaluateWinner(newGame.playerSum, newGame.dealerSum);
+
+        }
 
     });
 }
 
-function handleHitButton(obj) {
-        obj.playerCards.push(getOneCard());
-        renderCard(obj.playerCards[obj.playerCards.length - 1], "player");
-        obj.playerSum = sumValues(obj.playerCards);
-        playerSumSection.textContent = obj.playerSum;
+function handleHitButton() {
+        newGame.playerCards.push(getOneCard());
+        renderCard(newGame.playerCards[newGame.playerCards.length - 1], "player");
+        newGame.playerSum = sumValues(newGame.playerCards);
+        playerSumSection.textContent = newGame.playerSum;
 
 
         //Function  : player has ace 
-        const playerHasAce = obj.playerCards.find((card) =>  card.value == "11")
+        const playerHasAce = newGame.playerCards.find((card) =>  card.value == "11")
 
         
         if(playerHasAce){
@@ -272,14 +291,14 @@ function handleHitButton(obj) {
 
         //Function : detect how many ace cards player has 
         const ace = 11;
-        const countAce = obj.playerCards.filter((card) => card.value === ace).length;
+        const countAce = newGame.playerCards.filter((card) => card.value === ace).length;
 
         console.log("You have", countAce, "ace!!")
 
-        obj.playerSum = convertAceSum(countAce, obj.playerSum);
-        evaluateSum("player", obj.playerSum);
+        newGame.playerSum = convertAceSum(countAce, newGame.playerSum);
+        evaluateSum("player", newGame.playerSum);
 
-        playerSumSection.textContent = obj.playerSum;
+        playerSumSection.textContent = newGame.playerSum;
 }
 
 function showTableBtn() {
@@ -314,10 +333,10 @@ function evaluateSum (who, sum) {
 
 function evaluateWinner (player1, player2) {
     if (player1 > player2) {
-        resultMsg = "dealer wins!"
+        resultMsg = "player wins!"
         endGame();
     } else if (player1 < player2 ) {
-        resultMsg = "player wins!"
+        resultMsg = "dealer wins!"
         endGame();
 
     } else if (player1 == player2 ) {
