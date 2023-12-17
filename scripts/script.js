@@ -1,39 +1,37 @@
 "use strict";
 
 // Get html elements
-const startSection = document.querySelector(".start");
-const startBtn = document.querySelector(".btn-start");
+const startSection = document.querySelector(".start-section");
+const startBtn = document.getElementById("start-button");
 const loadingBox = document.querySelector(".loading-box");
 const gameSection = document.querySelector(".game");
-const dealerCardsContainer = document.querySelector(".dealer-cards-container");
+const dealerCardsContainer = document.getElementById("dealer-cards-container");
 const dealerSumSection = document.querySelector(".dealer-sum")
 const hitBtn = document.querySelector(".hit");
 const standBtn = document.querySelector(".stand");
-const playerCardsContainer = document .querySelector(".player-cards-container")
+const playerCardsContainer = document .getElementById("player-cards-container");
 const playerSumSection = document.querySelector(".palyer-sum");
-const restartBtn = document.querySelector(".btn-restart");
-
+const restartSection = document.querySelector(".restart-section")
+const resultline = document.querySelector(".result-line p");
+const restartBtn = document.querySelector(".restart");
 
 
 // Start Game
 startBtn.addEventListener('click', startGame);
-startBtn.addEventListener('click', function() {
-    startSection.style.display = "none";
-    
-});
-
 
 let newGame;
+let resultMsg = "continue";
+
 function startGame() {
-
+    startSection.style.display = "none";
     gameSection.style.display= "block";
+    loadingBox.style.display= "none";
+    gameStart();
 }
-
 
 // 1. Create Cards by using array
 //  1-1. 1 Dec Array 
 const dec = ["ac", "2c", "3c", "4c", "5c", "6c", "7c", "8c", "9c", "jc", "qc","kc","as","2s", "3s", "4s", "5s", "6s", "7s", "8s", "9s", "js", "qs","ks","ad", "2d", "3d", "4d", "5d", "6d", "7d", "8d", "9d", "jd", "qd","kd","ah", "2h", "3h", "4h", "5h", "6h", "7h", "8h", "9h", "jh", "qh","kh"]
-
 
 // Card Class
 class Card {
@@ -43,6 +41,7 @@ class Card {
         this.color = color;
         this.element = this.createCardElement();
     }
+
     createCardElement() {
         const card = document.createElement("div");
         card.classList.add("card");
@@ -54,7 +53,6 @@ class Card {
             `;
             return card;
     }
-
 }
 
 function renderCard(card, who) {
@@ -159,6 +157,16 @@ function introMassege() {
     }, 1000)
 };
 
+
+
+function resetUiState() {
+    restartSection.style.display = "none";
+    playerCardsContainer.innerHTML = ""
+    dealerCardsContainer.innerHTML = ""
+    hitBtn.removeEventListener("click", handleHitButton);
+    // standBtn.removeEventListener();
+    
+}
 // 2. Game Start
 //  2-1. shuffle 1 dec 
 //  2-2. player gets two cards first 
@@ -166,6 +174,8 @@ function introMassege() {
 //  2-4. calculate sum for dealer and player :
 // game start : player and dealer get two cards 
 function gameStart(){
+
+    resetUiState();
 
     shuffle(dec);
     newGame = new Game();
@@ -191,20 +201,21 @@ function gameStart(){
     newGame.dealerSum = sumValues(newGame.dealerCards);
     newGame.playerSum = sumValues(newGame.playerCards);
 
-    // check it there is Blackjack
-    if (newGame.playerSum == 21) {
-        console.log("player is Blackjack!")
-    } else if (newGame.dealerSum == 21) {
-        console.log("dealer is Blackjack") 
-    } else if (newGame.playerSum == 21 || newGame.dealerSum == 21) {
-        console.log("player and dealer are Blackjack - draw!!")
-    }
-
     // sum in UI 
     playerSumSection.textContent = newGame.playerSum;
     dealerSumSection.textContent = newGame.dealerSum;
 
-
+    // check it there is Blackjack
+    if (newGame.playerSum == 21) {
+        resultMsg = "Wow, you are blackjack!!"
+        endGame();
+    } else if (newGame.dealerSum == 21) {
+        resultMsg = "oops, dealer is blackjack!!"
+        endGame();
+    } else if (newGame.playerSum == 21 || newGame.dealerSum == 21) {
+        resultMsg = "Player and dealer are Blackjack"
+        endGame();
+    }
 
     //show 'hit' 'stand' buttons
     if (newGame.playerCards.length == 2) {
@@ -213,38 +224,7 @@ function gameStart(){
 
 //       2-4-2. if player hits 
 //                 2-4-2-1. player gets one card (card[4])
-        hitBtn.addEventListener('click', function(){
-        newGame.playerCards.push(getOneCard());
-        renderCard(newGame.playerCards[newGame.playerCards.length - 1], "player");
-        newGame.playerSum = sumValues(newGame.playerCards);
-        playerSumSection.textContent = newGame.playerSum;
-
-
-        //Function  : player has ace 
-        const playerHasAce = newGame.playerCards.find((card) =>  card.value == "11")
-
-        
-        if(playerHasAce){
-            console.log("player has an ace!")
-        } else {
-            console.log("player doesn't have an ace!")
-        }
-
-        //Function : detect how many ace cards player has 
-        const ace = 11;
-        const countAce = newGame.playerCards.filter((card) => card.value === ace).length;
-
-
-        console.log("You have", countAce, "ace!!")
-
-        newGame.playerSum = convertAceSum(countAce, newGame.playerSum);
-        evaluateSum("player",newGame.playerSum);
-
-        playerSumSection.textContent = newGame.playerSum;
-
-    });
-
-
+    hitBtn.addEventListener('click', () => { handleHitButton(newGame) }, false);
 
     standBtn.addEventListener('click', function(){
         
@@ -271,18 +251,36 @@ function gameStart(){
         evaluateWinner(newGame.playerSum, newGame.dealerSum);
 
     });
-
-
-
-
-
-
 }
 
-gameStart();
+function handleHitButton(obj) {
+        obj.playerCards.push(getOneCard());
+        renderCard(obj.playerCards[obj.playerCards.length - 1], "player");
+        obj.playerSum = sumValues(obj.playerCards);
+        playerSumSection.textContent = obj.playerSum;
 
 
+        //Function  : player has ace 
+        const playerHasAce = obj.playerCards.find((card) =>  card.value == "11")
 
+        
+        if(playerHasAce){
+            console.log("player has an ace!")
+        } else {
+            console.log("player doesn't have an ace!")
+        }
+
+        //Function : detect how many ace cards player has 
+        const ace = 11;
+        const countAce = obj.playerCards.filter((card) => card.value === ace).length;
+
+        console.log("You have", countAce, "ace!!")
+
+        obj.playerSum = convertAceSum(countAce, obj.playerSum);
+        evaluateSum("player", obj.playerSum);
+
+        playerSumSection.textContent = obj.playerSum;
+}
 
 function showTableBtn() {
     const tableBtn = document.querySelectorAll(".table-btn");
@@ -304,29 +302,36 @@ function convertAceSum (aceCount, sum) {
 
 function evaluateSum (who, sum) {
     if (sum == 21) {
-        console.log(who,"is Blackjack!");
-    } else if (sum < 21) {
-        console.log("go back to hit& stand");
+        resultMsg = who + " is Blackjack!"
+        endGame();
+    } else if (sum < 21) {;
+        resultMsg = "continue"
     } else if (sum > 21) {
-        console.log(who,"is Burst!")
+        resultMsg = who + " is Burst!"
+        endGame();
     }
 }
 
 function evaluateWinner (player1, player2) {
     if (player1 > player2) {
-        console.log(player1, "wins!!")
+        resultMsg = "dealer wins!"
+        endGame();
     } else if (player1 < player2 ) {
-        console.log(player2, "wins!")
+        resultMsg = "player wins!"
+        endGame();
+
     } else if (player1 == player2 ) {
-        console.log("draw!!")
+        resultMsg = "draw!!"
+        endGame();
     }
 }
+
+function endGame () {
+    resultline.textContent = resultMsg;
+    restartSection.style.display = "block"
+    restartBtn.addEventListener('click', gameStart);
+}  
 //detect cards array has a ace 
-
-
-
-  
-
 
 //      2-4-1. if dealer or player sum is 21 (blackjack) go to 2-6 
 //  2-5. show stand or hit btn :

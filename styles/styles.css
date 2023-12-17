@@ -1,3 +1,17 @@
+html {
+    box-sizing: border-box;
+  }
+  *,
+  *:before,
+  *:after {
+    box-sizing: inherit;
+  }
+  
+  img {
+    max-width: 100%;
+    display: block;
+  }
+
 /* component and layout */
 
 body{
@@ -6,25 +20,31 @@ body{
     font-family: Arial, Helvetica, sans-serif;
     padding: 0;
     color:black;
-    min-height: 100%;
-    max-width: 70em;
-    background-color: white;
+    background-color: rgb(255, 255, 255);
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
 }
 
-main {
-    margin: .5em;
-    padding:2em;
-    border-radius: 2em;
-    border : 1px solid black;
+.site-wrapper {
+    padding:1em;
+    border : 1px solid rgb(0, 0, 0);
+    position: relative;
+    margin: 0 auto;
+    height: 760px;
+    width: 1440px
+
 }
 
 section {
-    margin: 2rem auto;
-    padding: 1em;
+    /* margin: 2rem auto; */
+    /* padding: 1em; */
     border: 1px solid black;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     background-color: white;
     text-align: center;
+    /* max-width: 1410px;   */
+    /* height: 100% */
 
 }
 
@@ -46,27 +66,39 @@ h6 {
 
 p {
     font-size: 1em;
+    margin: 0;
 }
 
 img {
     display: block;
 }
 
-footer {
+.start-section {
     text-align: center;
-
+    margin: 3rem auto;
+    width: 40rem;
+    height:35rem;
+    text-align: center;
 }
 
+.start-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
-button {
+.btn {
     background-color: transparent;
     border: 1px solid black;
+    margin: 1rem;
+    height: 2rem; 
+    width: 5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
 }
-.start {
-    text-align: center;
-    width: 40rem;
-    height:40rem;
-}
+
 
 .start img{
     margin-bottom: 1rem;
@@ -81,11 +113,108 @@ button {
     right: 50%;
     padding: 0.1rem 1rem;
 }
-    
 
-.result {
+
+/* Game wrapper - layout grid */
+
+.board {
+    margin: 1rem;
+}
+
+.game-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 110px 100px 480px 100px 110px 1fr;
+    grid-template-rows: 280px 20px 45px 45px 20px 280px;
+    column-gap: 2em;
+}
+
+.board.dealer { 
+    grid-column: 3 / span 3;
+    display: flex;
+    flex-direction: column;
+}
+
+.cards-container {
+    width: 448px;
+    height: 180px;
+}
+
+.sum-box.dealer {
+    grid-column: 3;
+    grid-row: 2;
+    display: grid;
+    justify-content: right;}
+
+/* Hit & Stand buttons   */
+.table {
+    display:block; 
+    grid-column: 4;
+    grid-row: 3 / span 2;
+}
+
+.table-btn-wrapper {   
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    align-items: end;
+}
+
+.table-btn {
+    width: 5rem;
+    height: 5rem;
+    border-radius: 50%;
+    border: 1px solid black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: .3rem;
+    cursor: pointer;
+    visibility: hidden;
+
+}
+
+
+.table-btn.hit.activated,
+.table-btn.stand.activated {
+    visibility: visible;
+    transform: scale(1);
+    transition: transform 0.3s ease, visibility 0s ;
+
+}
+
+
+
+.sum-box.player {
+    grid-column: 3;
+    grid-row: 5;
+    display: grid;
+    justify-content: right;
+
+}
+
+.board.player {
+    grid-column: 3 / span 3;
+    grid-row: 6;
+}
+
+
+.restart-section {
     width: 40rem;
     height:10rem;
+    position: absolute;
+    top: 40%;
+    left: 27.7%;
+    padding: 2.5rem;
+    text-align: center;
+    display: none;
+
+}
+
+.message-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 
@@ -94,24 +223,15 @@ button {
     position: relative;
 }
 
-.result {
-    display:none;
+
+footer {
+    text-align: center;
+    bottom: 0; 
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%,0);
 }
 
-
-.red {
-    color:red;
-}
-
-.table-btn {
-    visibility: hidden;
-    transform: scale(0);
-}
-
-.table-btn.hit.activated,
-.table-btn.stand.activated {
-    visibility: visible;
-    transform: scale(1);
-    transition: transform 0.3s ease, visibility 0s ;
-
+footer p {
+    margin: 0.4rem 0;
 }

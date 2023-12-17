@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BlackJack</title>
-    <link rel="stylesheet" href="./styles/normalize.css">
     <link rel="stylesheet" href="./styles/styles.css">
     <link rel="stylesheet" href="./styles/animate.min.css">
     <script src="./scripts/script.js" defer ></script>
@@ -13,11 +12,11 @@
 <body>
     <div class="site-wrapper">
         <main>
-            <section class="start">
+            <section class="start-section">
                 <div class="start-box">
                     <h1>BlackJack</h1>
                     <img src="./images/blackjack-table-1.jpg" alt="BlackJack Start Image">
-                    <button class="btn-start">Start</button>
+                    <div class="btn start" id="start-button">Start</div>
                 </div>
             </section>
             <section class="game" >
@@ -25,40 +24,38 @@
                     <p>Now... let dealer suffle a dec...</p>
                 </div>
                 <div class="game-wrapper" id="game-wrapper">
-                    <div class="dealer-hand">
+                    <div class="board dealer">
                         <h2>Dealer</h2>
-                        <div class="dealer-cards-container"></div>
-                        <div><p>Dealer:<span class="dealer-sum"></span></p></div>
+                        <div class="cards-container dealer" id="dealer-cards-container"></div>
                     </div>
-
+                    <div class="sum-box dealer">
+                        <p>Dealer:<span class="dealer-sum"></span></p>
+                    </div>
                     <div class="table">
-                        <button class="table-btn hit">Hit</button>
-                        <button class="table-btn stand">Stand</button>
+                        <div class="table-btn-wrapper" id="table-btn">
+                            <div class="table-btn hit"><p>Hit</p></div>
+                            <div class="table-btn stand"><p>Stand</p></div>
+                        </div>
                     </div>
 
-                    <div class="player-hand">
+                    <div class="sum-box player">
+                        <p>Player :<span class="palyer-sum"></span></p>
+                    </div>
+
+                    <div class="board player">
+                        <div class="cards-container player" id="player-cards-container"></div>
                         <h2>player</h2>
-                        <div class="player-cards-container"></div>
-                        <div><p>Player :<span class="palyer-sum"></span></p></div>
                     </div>
                 </div>
             </section>
 
-            <section class="result">
+            <section class="restart-section">
                 <div class="message-box">
-                    <div>you want to play agin?</div>
-                    <button class="btn-restart">Restart</button>
+                    <div class="result-line" id="result-line"><p></p></div>
+                    <div><p>you want to play agin?</p></div>
+                    <div class="btn restart"><p>Restart</p></div>
                 </div>
             </section>
-
-            
-
-
-
-
-
-
-
         </main>
         <footer>
             <p>&copy; 2023 Ahreum Han</p>
