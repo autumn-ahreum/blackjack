@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Coming+Soon&family=Fredericka+the+Great&family=Mynerve&family=Pangolin&family=Rubik+Burned&family=Rubik+Distressed&family=Share+Tech+Mono&family=Victor+Mono:wght@300&display=swap');
+
 html {
     box-sizing: border-box;
   }
@@ -24,6 +26,10 @@ body{
     width: 100vw;
     height: 100vh;
     overflow: hidden;
+    --game-ui-font: 'Mynerve',fantasy, serif;
+    --game-ui-msg-font: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    --primary-bg-color: #fbfbdf;
+    --second-bg-color: #a0c08c;
 }
 
 .site-wrapper {
@@ -31,22 +37,22 @@ body{
     border : 1px solid rgb(0, 0, 0);
     position: relative;
     margin: 0 auto;
-    height: 760px;
-    width: 1440px
+    height: 760px; 
+    width: 1440px;
+    background: #8eb477d6;
 
 }
 
-section {
-    /* margin: 2rem auto; */
-    /* padding: 1em; */
+/* section {
     border: 1px solid black;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     background-color: white;
     text-align: center;
+    background-color: var(--primary-bg-color);
     /* max-width: 1410px;   */
     /* height: 100% */
 
-}
+} */
 
 button {
     padding: 10px 20px;
@@ -73,20 +79,6 @@ img {
     display: block;
 }
 
-.start-section {
-    text-align: center;
-    margin: 3rem auto;
-    width: 40rem;
-    height:35rem;
-    text-align: center;
-}
-
-.start-box {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
 .btn {
     background-color: transparent;
     border: 1px solid black;
@@ -100,11 +92,56 @@ img {
 }
 
 
-.start img{
-    margin-bottom: 1rem;
+.start-section {
+    text-align: center;
+    margin: 3rem auto;
+    width: 40rem;
+    height:35rem;
+    text-align: center;
 }
 
-/* message box */
+.start-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top:64px;
+}
+
+.start-box h1 {
+    font-family: Rubik Burned;
+    font-size: 78px;
+    margin-bottom: 1.2rem;
+
+}
+
+
+.start-box img{
+    margin-bottom: 1rem;
+    width: 30%;
+    transform: rotate(32deg);
+    margin-right: 18px;
+}
+
+.start-box .btn {
+    width: 9rem;
+    height: 3rem;
+    border-radius: 7%;
+    outline-style: double;
+    border: 2px dotted #0a0b0a;
+    background-size: 5px 5px;
+    background-image: repeating-linear-gradient(45deg, #d9d5d5 0, #fffcfc 1px, #ffffff 0, #ffffff 60%);
+    font-family: Rubik distressed;
+    font-size: 23px;
+    text-transform: uppercase;
+}
+
+.start-box .btn:hover, 
+.start-box .btn:checked {
+    background-image: repeating-linear-gradient(45deg, #d9d5d5 0, #fffcfc 1px, #ffffff 0, orange 60%);
+    outline-width: thick;
+
+} 
+
 .loading-box {
     border: 1px solid black;
     position: absolute;   
@@ -120,12 +157,22 @@ img {
 .board {
     margin: 1rem;
 }
+.game {
+    border-radius: 10px;
+    border: 1px solid black;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    text-align: center;
+    background-color: var(--primary-bg-color);
+}
 
 .game-wrapper {
     display: grid;
     grid-template-columns: 1fr 110px 100px 480px 100px 110px 1fr;
-    grid-template-rows: 280px 20px 45px 45px 20px 280px;
-    column-gap: 2em;
+    grid-template-rows: 264px 20px 45px 45px 20px 280px;
+    column-gap: 5px;
+    background-color: var(--primary-bg-color);
+    border-radius: 10px;
 }
 
 .board.dealer { 
@@ -142,6 +189,10 @@ img {
     justify-content: center
 }
 
+.cards-container.player {
+    align-content: flex-end;
+}
+
 .cards-container div:not(:first-child){
     margin-left: -86px;
 }
@@ -153,7 +204,7 @@ img {
 
 
 .sum-box.dealer {
-    grid-column: 3;
+    grid-column: 2 /span 2;
     grid-row: 2;
     display: grid;
     justify-content: right;}
@@ -173,16 +224,24 @@ img {
 }
 
 .table-btn {
-    width: 5rem;
-    height: 5rem;
+    width: 6rem;
+    height: 6rem;
     border-radius: 50%;
-    border: 1px solid black;
+    /* outline-width: thick; */
+    outline-style: double;
+    border: 2px dotted #0a0b0a;
+    background-color: #ffffff;
+    opacity: 1;
+    background-size: 5px 5px;
+    background-image: repeating-linear-gradient(45deg, #e9e6e6 0, #fffcfc 1px, #ffffff 0, #ffffff 60%);
     display: flex;
     align-items: center;
     justify-content: center;
     margin: .3rem;
     cursor: pointer;
     visibility: hidden;
+    font-family: var(--game-ui-font);
+    font-weight: bolder;
 
 }
 
@@ -198,7 +257,7 @@ img {
 
 
 .sum-box.player {
-    grid-column: 3;
+    grid-column: 2 /span 2;
     grid-row: 5;
     display: grid;
     justify-content: right;
@@ -212,10 +271,8 @@ img {
 
 
 .restart-section {
-    width: 25rem;
-    height: 10rem;
     position: absolute;
-    top: 38%;
+    top: 34%;
     left: 516px;
     padding: 2.5rem;
     text-align: center;
@@ -227,29 +284,105 @@ img {
 }
 
 .message-box {
+    width: 24rem;
+    height: 9rem;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     z-index: 5;
+    font-family: Share Tech Mono;
+    border: 2px black solid;
+    border-radius: 5px;
+    background-color: var(--second-bg-color);
 }
 
+.message-box .btn {
+
+    width: 7rem;
+    height: 2.8rem;
+    border-radius: 7%;
+    outline-style: double;
+    border: 2px dotted #0a0b0a;
+    background-size: 5px 5px;
+    background-image: repeating-linear-gradient(45deg, #d9d5d5 0, #fffcfc 1px, #ffffff 0, #ffffff 60%);
+    font-family: Rubik distressed;
+    font-size: 18px;
+    text-transform: uppercase;
+    
+}
+
+.message-box .btn:hover, 
+.message-box .btn:checked {
+    background-image: repeating-linear-gradient(45deg, #d9d5d5 0, #fffcfc 1px, #ffffff 0, orange 60%);
+    outline-width: thick;
+
+} 
 
 .game {
     display:none;
     position: relative;
 }
 
+/* Sum box styling */
+.sum-box p {
+    font-family: var(--game-ui-font);
+    font-size: 1.4rem;
+    border: 2px solid black;
+    border-radius: 5px;
+    font-size: 1.8rem;
+    
+    width: 129%;    
+    background-color: black;
+    color: white;
+    font-size: 1.4rem;
+
+}
+.table-btn {
+    /* background-color: rgb(19, 19, 19);
+    color: white; */
+    background-image: url(background-color: #ffffff;
+    opacity: 0.5;
+    background-size: 10px 10px;
+    background-image: repeating-linear-gradient(45deg, #c4c4c4 0, #c4c4c4 1px, #ffffff 0, #ffffff 50%););
+}
+
+.table-btn:hover {
+    outline-width: thick;
+    
+}
+.table-btn p:hover {
+    font-size: 1.7rem;
+    line-height: 3;
+
+
+}
+
+.table-btn p {
+    font-size: 1.4rem;   
+    width:80px;
+    height: 80px;
+    line-height: 3.5;
+    text-transform: uppercase;
+
+}
+
+
+
+
+/* sum box ends */
+
 /* Card styling */
 .card {
-    border: 1px solid black;
+    border: 1.5px solid black;
     border-radius: 5px;
     width: 160px;
     height: 240px;
     background-color: #f1f1f1;
     margin: 10px;
     font-size: 1.3rem;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    /* box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); */
+    box-shadow: 6px 3px 8px 0 rgba(0, 0, 0, 0.2), 8px 3px 5px 0 rgba(0, 0, 0, 0.19);
     display: block;
 }
 
@@ -277,29 +410,37 @@ img {
     display: flex;
     flex-direction: column;
     top: -3px;
+    left: 5px;
     font-size: 4rem;
-    font-family: sans-serif;
+    font-family: 'Fredericka the Great';
     font-weight: 600;
     text-transform: uppercase;
 
   }
 
 .top-left .card-suit {
-    margin-top: -13px;
+    margin-top: -23px;
     padding-left: 89px;
+        font-family: Georgia, monospace, 'Times New Roman', Times, serif, serif;
+
 }
 
 .center-value {
     position: absolute;
-    top: 68%;
-    left: 50%;
+    top: 72%;
+    left: 42%;
     transform: translate(-50%, -50%);
-    font-size: 8rem;
+    font-size: 8.8rem;
     font-weight: bold;
-    font-family: sans-serif;
+    font-family: 'Fredericka the Great';
+
     padding-left: 195px;
+  }
 
-
+  .center-value .card-suit {
+    display: inline-block;
+    /* font-size: 32px; */ 
+    transform: scale(1.2, 1);
   }
 
 .card-back {
@@ -336,6 +477,10 @@ img {
 .dealer .active div:first-child .card-back {
     display: none;
 }
+
+/* card styling ends */
+
+
 footer {
     text-align: center;
     bottom: 0; 
@@ -345,5 +490,5 @@ footer {
 }
 
 footer p {
-    margin: 0.3rem 0;
+    margin: 0.3rem 0 1rem;
 }
