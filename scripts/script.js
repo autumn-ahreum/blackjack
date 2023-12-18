@@ -15,10 +15,6 @@ const restartBtn = document.querySelector(".restart");
 const resultline = document.querySelector(".result-line p");
 const loadingBox = document.querySelector(".loading-box");
 
-
-
-
-
 class Card {
     constructor(name, value, color){
         this.name = name; // A♤ what is shown in UI
@@ -52,250 +48,264 @@ class Card {
     }
 }
 
+class CardController {
+    constructor() {
+        this.dec = ["ac", "2c", "3c", "4c", "5c", "6c", "7c", "8c", "9c", "jc", "qc","kc","as","2s", "3s", "4s", "5s", "6s", "7s", "8s", "9s", "js", "qs","ks","ad", "2d", "3d", "4d", "5d", "6d", "7d", "8d", "9d", "jd", "qd","kd","ah", "2h", "3h", "4h", "5h", "6h", "7h", "8h", "9h", "jh", "qh","kh"];
+        this.cardIndex = 0;
+    }
+
+    convertAceSum (aceCount, sum) {
+        if (sum <= 21 || aceCount == 0){
+            return sum; 
+        } else if (aceCount != 0) {
+            if (sum <= (aceCount + 1) * 10 + 1) { 
+                sum =  sum - (aceCount - 1) * 10;
+            } else if (sum > (aceCount + 1) * 10 + 1) {
+                sum = sum - aceCount * 10;
+            }
+            return sum;
+        }
+    }     
+    
+    getOneCard() {
+        let card = new Card(
+            this.dec[this.cardIndex][0] + this.convertToType(this.dec[this.cardIndex]), 
+            parseInt(this.convertToValue(this.dec[this.cardIndex])),
+            this.getColor(this.dec[this.cardIndex])
+        );
+        this.cardIndex++;
+        return card;
+    }
+    
+    convertToType(card) {
+        const type = card[1];
+        let suit;
+        if (type === "c") {
+            suit = '♣';
+        } else if (type === "s") {
+            suit = '♠';
+        } else if (type === "d") {
+            suit = '♦';
+        } else {
+            suit = "♥";
+        }
+        return suit;
+    }
+    
+    convertToValue(card){
+        const num = card[0];
+        let value;
+        if (num === "a") {
+            value = 11;
+        } else if (num == "j" || num == "q" || num == "k") {
+            value = 10; 
+        } else { 
+            value = num;
+        }
+        return value;
+    }
+    
+    getColor(card) {
+        const type = card[1];
+        if (type === "d" || type === "h") {
+            return "red";
+        } 
+        return "black";
+    }
+
+    shuffle() {
+        for (let i = this.dec.length - 1; i > 0; i--) {
+            let j = Math.floor(Math.random() * (i + 1));
+            [this.dec[i], this.dec[j]] = [this.dec[j], this.dec[i]];
+        }
+    }
+}
+
+const CONTINUE = "continue";
+
 class Game {
     constructor() {
+        this.resetStates();
+
+        startBtn.addEventListener('click', this.startGame.bind(this));
+        hitBtn.addEventListener('click', this.handleHitButton.bind(this));
+        standBtn.addEventListener('click', this.handleStandButton.bind(this));
+        restartBtn.addEventListener('click', this.gameStart.bind(this));
+    }
+
+    resetStates() {
         this.dealerCards = [];
         this.playerCards = [];
         this.dealerSum = 0;
         this.playerSum = 0;
-    }
-}
-
-const DEC = ["ac", "2c", "3c", "4c", "5c", "6c", "7c", "8c", "9c", "jc", "qc","kc","as","2s", "3s", "4s", "5s", "6s", "7s", "8s", "9s", "js", "qs","ks","ad", "2d", "3d", "4d", "5d", "6d", "7d", "8d", "9d", "jd", "qd","kd","ah", "2h", "3h", "4h", "5h", "6h", "7h", "8h", "9h", "jh", "qh","kh"];
-const CONTINUE = "continue";
-
-let game;
-let card; 
-let cardIndex;
-let resultMsg = CONTINUE;
-
-startBtn.addEventListener('click', startGame);
-
-function startGame() {
-    startSection.style.display = "none";
-    gameSection.style.display= "block";
-    loadingBox.style.display= "none";
-    gameStart();
-}
-
-function gameStart(){
-    resetUiState();
-
-    shuffle(DEC);
-    game = new Game();
-
-    // Player gets two cards 
-    game.playerCards.push(getOneCard());
-    game.playerCards.push(getOneCard());
-
-    // Dealer gets two cards 
-    game.dealerCards.push(getOneCard());
-    game.dealerCards.push(getOneCard());
-
-    // Player card UI
-    game.playerCards.forEach(element => {
-        renderCard(element, "player");
-    });
-
-    // Dealer card UI
-    game.dealerCards.forEach(element => {
-        renderCard(element, "dealer");
-    });
-
-    // Calculate sum 
-    game.dealerSum = sumValues(game.dealerCards);
-    game.playerSum = sumValues(game.playerCards);
-
-    // Initial sum in UI 
-    playerSumSection.textContent = game.playerSum;
-    dealerSumSection.textContent = game.dealerSum - game.dealerCards[0].value;
-
-    // check if there is Blackjack 
-    if (game.playerSum == 21) {
-        resultMsg = "Wow, you are already blackjack!!"
-        endGame();
-    } else if (game.dealerSum == 21) {
-        resultMsg = "Oops, dealer is blackjack!!" 
-        dealerCardsContainer.classList.add("active"); // open first hide dealer card
-        dealerSumSection.textContent = game.dealerSum; 
-        endGame();
-    } else if (game.playerSum == 21 || game.dealerSum == 21) {
-        dealerCardsContainer.classList.add("active");
-        dealerSumSection.textContent = game.dealerSum;
-        resultMsg = "You and dealer are Blackjack"
-        endGame();
-    }
-
-    // Show hit & stand buttons
-    if (game.playerCards.length == 2) {
-        showTableBtn(); 
-    }
-
-    hitBtn.addEventListener('click', handleHitButton);
-    standBtn.addEventListener('click',handdleStandButton);
-}
-
-function resetUiState() {
-    cardIndex = 0;
-    restartSection.style.display = "none";
-    playerCardsContainer.innerHTML = "";
-    dealerCardsContainer.innerHTML = "";
-    hitBtn.removeEventListener("click", handleHitButton);
-    standBtn.removeEventListener("click", handdleStandButton);
-    dealerCardsContainer.classList.remove("active"); // D's first card open    
-}
-
-function shuffle(cards) {
-    for (let i = cards.length - 1; i > 0; i--) {
-        let j = Math.floor(Math.random() * (i + 1));
-        [cards[i], cards[j]] = [cards[j], cards[i]];
-    }
-}
-
-function renderCard(card, who) {
-    const cardElement = card.createCardElement(); // Create the card element
-    if (who === "player") {
-        playerCardsContainer.appendChild(cardElement);
-    } else if (who === "dealer") {
-        dealerCardsContainer.appendChild(cardElement);
-    }
-}
-
-function getOneCard() {
-    card = new Card(
-        DEC[cardIndex][0] + convertToType(DEC[cardIndex]), 
-        parseInt(convertToValue(DEC[cardIndex])),
-        getColor(DEC[cardIndex])
-    );
-    cardIndex++;
-    return card;
-}
-
-function sumValues(cards){
-    let sum = 0;
-    cards.forEach( e => {
-        sum += e.value;
-    })
-    return sum;
-}
-
-function convertToType(card) {
-    const type = card[1];
-    let suit;
-    if (type === "c") {
-        suit = '♣';
-    } else if (type === "s") {
-        suit = '♠';
-    } else if (type === "d") {
-        suit = '♦';
-    } else {
-        suit = "♥";
-    }
-    return suit;
-}
-
-function convertToValue(card){
-    const num = card[0];
-    let value;
-    if (num === "a") {
-        value = 11;
-    } else if (num == "j" || num == "q" || num == "k") {
-        value = 10; 
-    } else { 
-        value = num;
-    }
-    return value;
-}
-
-function getColor(card) {
-    const type = card[1];
-    if (type === "d" || type === "h") {
-        return "red";
-    } 
-    return "black";
-}
-
-function showTableBtn() {
-    const tableBtn = document.querySelectorAll(".table-btn");
-    tableBtn.forEach(element => {
-        element.classList.add("activated");      
-    }
-)}
-
-function handleHitButton() {
-        game.playerCards.push(getOneCard());
-        renderCard(game.playerCards[game.playerCards.length - 1], "player");
-        game.playerSum = sumValues(game.playerCards);
-        playerSumSection.textContent = game.playerSum;
+        this.resultMsg = CONTINUE;
+        this.cardController = new CardController();
         
-        //Detect how many ace cards player has 
-        const ace = 11;
-        const countAce = game.playerCards.filter((card) => card.value === ace).length;
-
-        game.playerSum = convertAceSum(countAce, game.playerSum);
-        evaluateSum("You", game.playerSum);
-
-        playerSumSection.textContent = game.playerSum;
-}
-
-function handdleStandButton() {
-    dealerCardsContainer.classList.add("active"); // D's first card open
-    dealerSumSection.textContent = game.dealerSum;
-
-    while (game.dealerSum < 17) {
-        game.dealerCards.push(getOneCard());
-        renderCard(game.dealerCards[game.dealerCards.length - 1], "dealer");
-        game.dealerSum = sumValues(game.dealerCards);
-        dealerSumSection.textContent = game.dealerSum;
+        restartSection.style.display = "none";
+        playerCardsContainer.innerHTML = "";
+        dealerCardsContainer.innerHTML = "";
+        hitBtn.removeEventListener("click", this.handleHitButton);
+        standBtn.removeEventListener("click", this.handleStandButton);
+        dealerCardsContainer.classList.remove("active"); // D's first card open    
     }
 
-    evaluateSum("Dealer", game.dealerSum);
-    if (resultMsg === CONTINUE) {
-        evaluateWinner(game.playerSum, game.dealerSum);
+    startGame = () => {
+        startSection.style.display = "none";
+        gameSection.style.display= "block";
+        loadingBox.style.display= "none";
+        this.gameStart();
     }
-}
+    
+    gameStart = () => {
+        this.resetStates();
 
-function convertAceSum (aceCount, sum) {
-    if (sum <= 21 || aceCount == 0){
-        return sum; 
-    } else if (aceCount != 0) {
-        if (sum <= (aceCount + 1) * 10 + 1 ) {
-            sum =  sum - (aceCount - 1) * 10
-        } else if (sum > (aceCount + 1) * 10 + 1 ) {
-            sum = sum - aceCount * 10
+        this.cardController.shuffle();
+
+        // Player gets two cards 
+        this.playerCards.push(this.cardController.getOneCard());
+        this.playerCards.push(this.cardController.getOneCard());
+    
+        // Dealer gets two cards 
+        this.dealerCards.push(this.cardController.getOneCard());
+        this.dealerCards.push(this.cardController.getOneCard());
+    
+        // Player card UI
+        this.playerCards.forEach(element => {
+            this.renderCard(element, "player");
+        });
+    
+        // Dealer card UI
+        this.dealerCards.forEach(element => {
+            this.renderCard(element, "dealer");
+        });
+    
+        // Calculate sum 
+        this.dealerSum = this.sumValues(this.dealerCards);
+        this.playerSum = this.sumValues(this.playerCards);
+    
+        // Initial sum in UI 
+        playerSumSection.textContent = this.playerSum;
+        dealerSumSection.textContent = this.dealerSum - this.dealerCards[0].value;
+    
+        // check if there is Blackjack 
+        if (this.playerSum == 21) {
+            this.resultMsg = "Wow, you are already blackjack!!"
+            this.endGame();
+        } else if (this.dealerSum == 21) {
+            this.resultMsg = "Oops, dealer is blackjack!!" 
+            dealerCardsContainer.classList.add("active"); // open first hide dealer card
+            dealerSumSection.textContent = this.dealerSum; 
+            this.endGame();
+        } else if (this.playerSum == 21 || this.dealerSum == 21) {
+            dealerCardsContainer.classList.add("active");
+            dealerSumSection.textContent = this.dealerSum;
+            this.resultMsg = "You and dealer are Blackjack"
+            this.endGame();
         }
+
+        // Edge case - when initial cards are both As
+        if (this.dealerSum == 22) {
+            this.evaluateSum("Dealer", this.dealerSum);
+            dealerCardsContainer.classList.add("active"); // D's first card open
+            dealerSumSection.textContent = this.dealerSum;
+        } else if (this.playerSum == 22) {
+            this.playerSum = this.cardController.convertAceSum(2, this.playerSum);
+            playerSumSection.textContent = this.playerSum;
+        }
+    
+        // Show hit & stand buttons
+        if (this.playerCards.length == 2) {
+            this.showTableBtn(); 
+        }
+    }
+
+    handleHitButton() {
+            this.playerCards.push(this.cardController.getOneCard());
+            this.renderCard(this.playerCards[this.playerCards.length - 1], "player");
+            this.playerSum = this.sumValues(this.playerCards);
+            playerSumSection.textContent = this.playerSum;
+            
+            //Detect how many ace cards player has 
+            const ace = 11;
+            const countAce = this.playerCards.filter((card) => card.value === ace).length;
+
+            this.playerSum = this.cardController.convertAceSum(countAce, this.playerSum);
+            this.evaluateSum("You", this.playerSum);
+
+            playerSumSection.textContent = this.playerSum;
+    }
+
+    handleStandButton() {
+        dealerCardsContainer.classList.add("active"); // D's first card open
+        dealerSumSection.textContent = this.dealerSum;
+
+        while (this.dealerSum < 17) {
+            this.dealerCards.push(this.cardController.getOneCard());
+            this.renderCard(this.dealerCards[this.dealerCards.length - 1], "dealer");
+            this.dealerSum = this.sumValues(this.dealerCards);
+            dealerSumSection.textContent = this.dealerSum;
+        }
+
+        this.evaluateSum("Dealer", this.dealerSum);
+        if (this.resultMsg === CONTINUE) {
+            this.evaluateWinner(this.playerSum, this.dealerSum);
+        }
+    }
+
+    renderCard(card, who) {
+        const cardElement = card.createCardElement(); // Create the card element
+        if (who === "player") {
+            playerCardsContainer.appendChild(cardElement);
+        } else if (who === "dealer") {
+            dealerCardsContainer.appendChild(cardElement);
+        }
+    }
+
+    showTableBtn() {
+        const tableBtn = document.querySelectorAll(".table-btn");
+        tableBtn.forEach(element => {
+            element.classList.add("activated");      
+        })
+    }
+
+    sumValues(cards){
+        let sum = 0;
+        cards.forEach( e => {
+            sum += e.value;
+        })
         return sum;
     }
-}       
 
-function evaluateSum (who, sum) {
-    if (sum == 21) {
-        resultMsg = who + " blackjack!";
-        endGame();
-    } else if (sum < 21) {;
-        resultMsg = CONTINUE;
-    } else if (sum > 21) {
-        resultMsg = who + " bust!";
-        endGame();
+    evaluateSum(who, sum) {
+        if (sum == 21) {
+            this.resultMsg = who + " blackjack!";
+            this.endGame();
+        } else if (sum < 21) {;
+            this.resultMsg = CONTINUE;
+        } else if (sum > 21) {
+            this.resultMsg = who + " bust!";
+            this.endGame();
+        }
+    }
+
+    evaluateWinner(player1, player2) {
+        if (player1 > player2) {
+            this.resultMsg = "You win!"
+            this.endGame();
+        } else if (player1 < player2 ) {
+            this.resultMsg = "The dealer wins!"
+            this.endGame();
+
+        } else if (player1 == player2 ) {
+            this.resultMsg = "DRAW!!"
+            this.endGame();
+        }
+    }
+
+    endGame() {
+        resultline.textContent = this.resultMsg;
+        restartSection.style.display = "block";
     }
 }
 
-function evaluateWinner (player1, player2) {
-    if (player1 > player2) {
-        resultMsg = "You win!"
-        endGame();
-    } else if (player1 < player2 ) {
-        resultMsg = "The dealer wins!"
-        endGame();
-
-    } else if (player1 == player2 ) {
-        resultMsg = "DRAW!!"
-        endGame();
-    }
-}
-
-function endGame () {
-    resultline.textContent = resultMsg;
-    restartSection.style.display = "block";
-    restartBtn.addEventListener('click', gameStart);
-}  
+const game = new Game();
