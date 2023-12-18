@@ -255,7 +255,11 @@ function convertAceSum (aceCount, sum) {
     if (sum <= 21 || aceCount == 0){
         return sum; 
     } else if (aceCount != 0) {
-        sum = sum - (aceCount + 1) * 10 + 1;
+        if (sum <= (aceCount + 1) * 10 + 1 ) {
+            sum =  sum - (aceCount - 1) * 10
+        } else if (sum > (aceCount + 1) * 10 + 1 ) {
+            sum = sum - aceCount * 10
+        }
         return sum;
     }
 }       
