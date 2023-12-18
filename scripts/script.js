@@ -30,7 +30,7 @@ class Card {
         card.style.zIndex = "1";
 
         card.innerHTML = 
-            `<div id="${this.name}" class="card-face card-front active">
+            `<div id="${this.name}" class="card-face card-front">
                 <div class="top-left">
                     <div class="card-value"> ${this.name[0]}</div>
                     <div class="card-suit">${this.name[1]}</div>
