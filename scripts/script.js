@@ -15,6 +15,10 @@ const restartBtn = document.querySelector(".restart");
 const resultline = document.querySelector(".result-line p");
 const loadingBox = document.querySelector(".loading-box");
 
+
+
+
+
 class Card {
     constructor(name, value, color){
         this.name = name; // A♤ what is shown in UI
@@ -128,7 +132,7 @@ function gameStart(){
     }
 
     hitBtn.addEventListener('click', handleHitButton);
-    standBtn.addEventListener('click',haddleStandButton);
+    standBtn.addEventListener('click',handdleStandButton);
 }
 
 function resetUiState() {
@@ -137,7 +141,7 @@ function resetUiState() {
     playerCardsContainer.innerHTML = "";
     dealerCardsContainer.innerHTML = "";
     hitBtn.removeEventListener("click", handleHitButton);
-    standBtn.removeEventListener("click", haddleStandButton);
+    standBtn.removeEventListener("click", handdleStandButton);
     dealerCardsContainer.classList.remove("active"); // D's first card open    
 }
 
@@ -234,7 +238,7 @@ function handleHitButton() {
         playerSumSection.textContent = game.playerSum;
 }
 
-function haddleStandButton() {
+function handdleStandButton() {
     dealerCardsContainer.classList.add("active"); // D's first card open
     dealerSumSection.textContent = game.dealerSum;
 
