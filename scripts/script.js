@@ -144,8 +144,6 @@ class Game {
         restartSection.style.display = "none";
         playerCardsContainer.innerHTML = "";
         dealerCardsContainer.innerHTML = "";
-        hitBtn.removeEventListener("click", this.handleHitButton);
-        standBtn.removeEventListener("click", this.handleStandButton);
         dealerCardsContainer.classList.remove("active"); // D's first card open    
     }
 
@@ -280,8 +278,6 @@ class Game {
         if (sum == 21) {
             this.resultMsg = who + " blackjack!";
             this.endGame();
-        } else if (sum < 21) {;
-            this.resultMsg = CONTINUE;
         } else if (sum > 21) {
             this.resultMsg = who + " bust!";
             this.endGame();
