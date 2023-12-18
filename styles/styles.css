@@ -285,7 +285,7 @@ img {
 
 .message-box {
     width: 24rem;
-    height: 9rem;
+    height: 10rem;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -295,6 +295,10 @@ img {
     border: 2px black solid;
     border-radius: 5px;
     background-color: var(--second-bg-color);
+}
+
+.message-box div:not(:last-child) {
+    font-size:1.5rem;
 }
 
 .message-box .btn {
